@@ -48,11 +48,13 @@ config = vars(parser.parse_args())
 print(f"Python command: 'python {' '.join(sys.argv)}'")
 
 
-BASE_DIR = Path(".").absolute()
+BASE_DIR = Path(".").absolute().parent
 DATA_DIR = Path.joinpath(BASE_DIR, "data")
 ANNOT_DIR = Path.joinpath(DATA_DIR, "annotations", "UBERON")
 GRAPH_FILE = Path.joinpath(DATA_DIR, "uberon_hierarchy.graphml")
-SAMPLE_FILE = Path("data/samples.csv")
+EMB_DIR = Path.joinpath(DATA_DIR, "grid_search", "embeddings")
+SAMPLE_FILE = Path.joinpath(DATA_DIR, "samples.csv")
+EMB_DIR.mkdir(exist_ok=True, parents=True)
 
 devices = tf.config.list_physical_devices("GPU")
 for device in devices:
@@ -190,7 +192,7 @@ if __name__ == "__main__":
 
         model = tf.keras.Model(inputs=x_inp, outputs=prediction)
         model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3 ),
             loss=tf.keras.losses.binary_crossentropy,
             metrics=[tf.keras.metrics.binary_accuracy],
         )
@@ -223,8 +225,7 @@ if __name__ == "__main__":
     print(f"Final score: {final_score}")
 
     if config.get("savefile"):
-        with open(Path.joinpath(
-            Path(".").absolute(), "grid_search", "embeddings", str(round(final_score, 6)) + "_" + \
+        with open(Path.joinpath(EMB_DIR, f"{str(round(final_score, 6))}_" + \
             "_".join([str(i) for i in config.values()][3:]) + "_" + \
             f"NODE2VEC_UBERON_OBO_{config.get('dimension')}D.npy"), "wb") as f:
             np.save(f, embeddings)

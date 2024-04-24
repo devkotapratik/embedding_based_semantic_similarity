@@ -46,8 +46,10 @@ def train_embeddings(args_queue, result_queue, proc_count):
 
 
 if __name__ == "__main__":
-    OUT_DIR = Path("grid_search/embeddings")
-    OUT_DIR.mkdir(exist_ok=True, parents=True)
+    BASE_DIR = Path(".").absolute().parent
+    DATA_DIR = Path.joinpath(BASE_DIR, "data")
+    EMB_DIR = Path.joinpath(DATA_DIR, "grid_search", "embeddings")
+    EMB_DIR.mkdir(exist_ok=True, parents=True)
     
     # walk_number = list(range(50, 160, 10))
     # walk_length = list(range(5, 35, 5))
